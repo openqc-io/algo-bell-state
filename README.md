@@ -29,16 +29,33 @@ measure q -> c;
 
 ## How to run
 
+### Python SDK
+
 ```python
 from openqc import OpenQC
-qc = OpenQC(api_key="your-key")
-result = qc.algorithm.run("bell-state")
+
+qc = OpenQC(api_key="oqc_...")           # see openqc.io → Settings → API Keys
+result = qc.algorithm.run("bell-state", input_data={})
 print(result)
 ```
 
+`input_data` is required (use `{}` if the algorithm takes no parameters).
+`run()` polls until the job completes; pass `wait=False` to return the job id immediately.
+
+### HTTP API
+
 ```bash
-openqc algorithm run bell-state
+curl -X POST https://openqc.io/v1/jobs/algorithms/bell-state/run \
+  -H "Authorization: Bearer $OPENQC_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"input_data": {}, "backend": "auto"}'
 ```
+
+Returns a job id; poll `GET /v1/jobs/{job_id}` until `status=completed`.
+
+### CLI
+
+A dedicated `openqc algorithm run ...` command is on the roadmap (Phase 9). Until then, use the SDK or HTTP examples above.
 
 ## References
 
